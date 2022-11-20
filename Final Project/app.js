@@ -7,6 +7,7 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const flash = require('connect-flash');
 const mainRoutes = require('./routes/mainRoutes');
+const userRoutes = require('./routes/userRouter');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const { env } = require('process');
 
@@ -29,11 +30,14 @@ mongoose.connect(uri,
 .then(()=>{
     //start app
     app.listen(port, host, ()=>{
-        console.log('Server is running on port', port);
+        console.log(`Server is running on port http://localhost:${port}`);
     });
 })
 .catch(err=>console.log(err.message));
 
+
+
+ 
 
 //mounting session and flash
 app.use(
@@ -45,6 +49,14 @@ app.use(
         cookie: {maxAge: 60*60*1000}
         })
 );
+
+mongoose.connection.on('connected', ()=>{
+    console.log('Mongoose is connected');
+}
+);
+
+
+
 
 app.use(flash());
 
@@ -69,7 +81,7 @@ app.use(methodOverride("_method"));
 
 //mount main routes
 app.use('/', mainRoutes);
-
+app.use('/users', userRoutes);
 
 //---
 

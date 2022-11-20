@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Register Page</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+</head>
+<body>
+    
+    <%- include('./partials/header.ejs')%>
+    <div class="LCont">
+    </div>
+    <div class="CCont">
+        <div>
+            <form action="/users/register" method="POST">
+                <label for="email">Email</label>
+                <input type="email" name="email" id="email" placeholder="Email">
+                <label for="firstName">First Name</label>
+                <input type="text" name="firstName" id="firstName" placeholder="firstName">
+                <label for="lastName">Last Name</label>
+                <input type="text" name="lastName" id="lastName" placeholder="lastName">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" placeholder="Password">
+                <label for="password2">Confirm Password</label>
+                <input type="password" name="password2" id="password2" placeholder="Confirm Password">
+                <button type="submit">Register</button>
+            </form>
+        </div>
+    </div>
+    <div class="RCont"></div>
+    <%- include('./partials/footer.ejs')%>
+</body>
+</html>
