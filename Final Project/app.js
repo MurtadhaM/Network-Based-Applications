@@ -37,7 +37,7 @@ mongoose.connect(uri,
 
 
 
- 
+
 
 //mounting session and flash
 app.use(
