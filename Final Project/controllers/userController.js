@@ -2,12 +2,23 @@
 // User Controller
 const User = require('../models/user');
 const { check, validationResult } = require('express-validator');
+const passport = require('passport');
+
 exports.login = (req, res) => {
-    res.render('login');
+    if (req.session.user) {
+        res.redirect('/users/profile') ;
+         
+    }
+    else {
+        res.render('login');
+    }
+
+
 }
 
 exports.register = (req, res) => {
     res.render('register');
+
 }
 
 exports.loginPost = (req, res, next) => {
@@ -56,7 +67,12 @@ exports.registerPost = (req, res) => {
     console.log(user);
     user.save()
     .then(() => {
-        res.redirect('/users/login');
+        req.flash('success', 'You are now registered and can log in');
+        // create a session
+        req.session.user = user;
+        req.session.name = user.firstName;
+        res.redirect('/users/profile');
+        
     })
     .catch(err => {
         res.send(err);
@@ -64,7 +80,13 @@ exports.registerPost = (req, res) => {
 }
 
 exports.profile = (req, res) => {
-    res.render('profile');
+    if (req.session.user) {
+        res.render('profile');
+    }
+    else {
+        res.redirect('/users/login');
+    }
+    
 }
 
 exports.logout = (req, res) => {

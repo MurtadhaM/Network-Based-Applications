@@ -5,8 +5,11 @@ const router = express.Router();
 const controller = require('../controllers/userController');
 const { check, validationResult } = require('express-validator');
 const passport = require('passport');
-const flash = require('connect-flash');
 var LocalStrategy = require('passport-local').Strategy; /* this should be after passport*/
+
+const auth = require('../middlewares/Authentication');
+
+
 
 //user login
 router.get('/login', controller.login);
@@ -27,13 +30,8 @@ router.post('/register', [
     }
     )
 ], controller.registerPost);
-
 //user profile
-
 router.get('/profile', controller.profile);
-
 //user logout
-
 router.get('/logout', controller.logout);
-
 module.exports = router;

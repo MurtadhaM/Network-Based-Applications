@@ -8,6 +8,9 @@ const MongoStore = require('connect-mongo');
 const flash = require('connect-flash');
 const mainRoutes = require('./routes/mainRoutes');
 const userRoutes = require('./routes/userRouter');
+const APIRoutes = require('./routes/APIRoutes');
+
+const Authenticated = require('./middlewares/Authentication');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const { env } = require('process');
 
@@ -46,6 +49,7 @@ app.use(
         resave: false,
         saveUninitialized: false,
         store: new MongoStore({mongoUrl: uri}),
+        
         cookie: {maxAge: 60*60*1000}
         })
 );
@@ -74,6 +78,9 @@ app.use(express.static('public'));
 app.use(express.urlencoded({extended: true}));
 app.use(morgan('tiny'));
 app.use(methodOverride("_method"));
+ 
+// Authentication middleware
+
 
 
 //mount event routes
@@ -82,7 +89,17 @@ app.use(methodOverride("_method"));
 //mount main routes
 app.use('/', mainRoutes);
 app.use('/users', userRoutes);
+app.use('/api', APIRoutes);
+ 
+const api = require('./routes/APIRoutes');
+api.use('/api', api);
+api.get('/api', (req, res) => {
+    res.render('api');
+});
 
+app.get('/api',  APIRoutes);
+app.get('/api/createUser', APIRoutes);
+//error handling
 //---
 
 app.use((req, res, next)=>{
@@ -102,5 +119,24 @@ app.use((err, req, res, next)=>{
     res.render('error', {error: err});
 });
 
+app.use((req, res, next)=>{
+
+    if(req.session.user){
+        next();
+    }   
+    else{
+        res.redirect('/login');
+    }
+});
 
 
+app.get('/users/logout', (req, res) => {
+    req.session.destroy();
+    res.redirect('/');
+}   );
+
+app.delete('/users/logout', (req, res) => {
+    req.session.destroy();
+    res.redirect('/');
+}
+);

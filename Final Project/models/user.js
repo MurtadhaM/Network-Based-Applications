@@ -6,6 +6,7 @@ const userSchema = new Schema({
     lastName: {type: String, required: [true, 'last name is required']},
     email: {type: String, required: [true, 'email address is required'], unique: [true, 'this email address has been used'] },
     password: { type: String, required: [true, 'password is required'] },
+    date: { type: Date, default: Date.now },
 }
 );
 
