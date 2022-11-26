@@ -1,0 +1,14 @@
+{
+  "name": "singleton",
+  "version": "1.0.0",
+  "description": "",
+  "main": "instance.js", 
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon instance.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+  }
+}
