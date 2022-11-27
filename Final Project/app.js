@@ -67,7 +67,7 @@ mongoose.connection.on('connected', ()=>{
 // Setup the Routes
 app.use('/', mainRoutes);
 app.use('/user', userRoutes);
-app.use('/api', APIRoutes);
+app.use('/api/V1/', APIRoutes);
 
 
 

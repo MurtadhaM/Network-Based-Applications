@@ -4,13 +4,40 @@
 // ==============
 // This controller is used to handle all API requests
 const User = require('../models/user');
-
+const bcrypt = require('bcryptjs');
 exports.api = (req, res) => {
     res.json({
         message: 'API is working'
     }); 
 }; 
 
+exports.createSession = (req, res) => {
+    
+    // Check if authorization header is set
+    if (req.headers.authorization) {
+        // Authorization header is set
+        // Split at the space
+        const bearer = req.headers.authorization.split(' ');
+        // Get token from array
+        const token = bearer[1];
+        // Set the token
+        req.token = token;
+        // Next middleware
+        next();
+    } else {
+        // Forbidden
+        res.sendStatus(403);
+    }
+    res.append('Access-Control-Allow-Origin', ['*']);
+    res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.append('Access-Control-Allow-Headers', 'Content-Type');
+    res.append('Access-Control-Allow-Credentials', 'true');
+    res.append('Access-Control-Max-Age', '86400');
+    res.append('Access-Control-Expose-Headers', 'Authorization');
+    res.append('Access-Control-Expose-Headers', 'Content-Type');
+    res.append('Access-Control-Expose-Headers', 'X-Requested-With');
+    res.append('Access-Control-Expose-Headers', 'Accept');
+};
 
 
 exports.login = (req, res) => {
@@ -27,31 +54,33 @@ exports.login = (req, res) => {
     ({ email: req.query.email })
     .then(user => {
         if (!user) {
+            
             return res.status(400).json({ message: 'User not found or password incorrect' });
         }
          
+        const isMatch = bcrypt.compareSync(req.query.password, user.password);
+        if (isMatch) { 
 
         
-        user.isMatch(req.query.password, user.password, (err, isMatch) => {
-            if (err) {
-                console.log(err);
-                return res.status(400).json({ message: 'User not found or password incorrect' });
-            }
+            console.log(`{ "message": "User not found" } ${user.email} ${user.password}`); 
             if (isMatch) {
                 console.log(`{ "message": "User logged in" } ${email} ${password}`);
                 return res.status(200).json({ message: 'User logged in' });
+              
+                
+
             } else {
 
                 console.log(`{ "message": "User not found or password incorrect" } ${email} ${password}`);
                 return res.status(400).json({ message: 'User not found or password incorrect' });
             }
+        } else {
+            console.log(`{ "message": "User not found or password incorrect" } ${email} ${password}`);
+            return res.status(400).json({ message: 'User not found or password incorrect' });
+
+        }
         });
-    })
-    .catch(err => {
-        console.log(err);
-        return res.status(400).json({ message: 'User not found or password incorrect' });
-    });
-}
+    };
 
 
 exports.validate = (req, res) => {

@@ -29,17 +29,7 @@ router.route('/login').all( (req, res) => {
 
 
 router.route('/register').all( (req, res) => {
-
-
-    controller.createUser( req, res).then((result) => {
-        console.log(result);
-        res.send(result);
-    }).catch((err) => {
-        console.log(err);
-        res.send(err);
-    }
-    );
-    
+    controller.createUser( req, res) ;
 });
 
 

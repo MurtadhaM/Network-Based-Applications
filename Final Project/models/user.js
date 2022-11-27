@@ -3,7 +3,14 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const toast = require('react-hot-toast');
 
-const UserSchema = new mongoose.Schema({
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(ejsl 
+  .
+
+ UserSchema = new mongoose.Schema({
   
   email: {
     type: String,

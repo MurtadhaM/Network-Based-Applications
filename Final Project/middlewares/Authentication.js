@@ -3,6 +3,8 @@
 This Middleware is used to check if the user is logged in or not.
 */
 
+
+
 const flash = require("connect-flash/lib/flash");
 
 
@@ -141,25 +143,7 @@ function refreshToken() {
 
 
 /* Handle request for JWT token generation */
-function generateToken() {
-    const login = $("#login").val();
-    const postData = "login=" + encodeURIComponent(login) + "&password=test";
 
-    $.post("/services/authenticate", postData, function (data) {
-        if (data.status == "Authentication successful!") {
-            alert("Authentication successful!");
-            sessionStorage.setItem("token", data.token);
-        }
-        else {
-            alert("Logout successful!");
-            sessionStorage.removeItem("token");
-        }
-    })
-    .fail(function (jqXHR, textStatus, error) {
-        alert("Authentication failed!");
-        sessionStorage.removeItem("token");
-    });
-}
 
 
 
