@@ -3,14 +3,25 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const toast = require('react-hot-toast');
 
+
+const toast = require('react-hot-toast');
+const User = mongoose.model('User', UserSchema);
 app.use(express.json());
+const app = express();
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+    console.log(`Listening on port ${port}...`);
+});
+
+
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(ejsl 
-  .
+app.use(ejsl = require('ejs-layouts'));
 
- UserSchema = new mongoose.Schema({
+
+const
+   UserSchema = new mongoose.Schema({
   
   email: {
     type: String,
