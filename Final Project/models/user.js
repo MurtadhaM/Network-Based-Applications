@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+const toast = require('react-hot-toast');
 
 const UserSchema = new mongoose.Schema({
   
@@ -11,6 +12,7 @@ const UserSchema = new mongoose.Schema({
     validate: {
       validator: validator.isEmail,
       message: 'Please provide valid email',
+      toasts: toast.toast('Please provide valid email'),
     },
   },
   password: {
@@ -51,3 +53,4 @@ UserSchema.methods.comparePassword = async function (canditatePassword) {
 };
 
 module.exports = mongoose.model('User', UserSchema);
+

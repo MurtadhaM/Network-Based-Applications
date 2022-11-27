@@ -10,17 +10,19 @@ const mainRoutes = require('./routes/mainRoutes');
 const userRoutes = require('./routes/userRouter');
 const APIRoutes = require('./routes/APIRoutes');
 
-const Authenticated = require('./middlewares/Authentication');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const { env } = require('process');
-
 let password = env.MONGODB_PASSWORD
 let username = env.MONGODB_USERNAME
 let secret = env.MONGO_SESSION_SECRET
-const uri = `mongodb+srv://${username}:${password}@snakemongodb.uvvqkzx.mongodb.net/?retryWrites=true&w=majority`;
-
-//create app
 const app = express();
+const uri = `mongodb+srv://${username}:${password}@snakemongodb.uvvqkzx.mongodb.net/?retryWrites=true&w=majority`;
+app.set('view engine', 'ejs');
+const path = require('path');
+
+// set views for error and 404 pages
+app.set('views', path.join(__dirname, 'views'));
+//create app
 
 //configure app
 let port = 8080;
@@ -37,6 +39,7 @@ mongoose.connect(uri,
     });
 })
 .catch(err=>console.log(err.message));
+
 
 
 
@@ -61,82 +64,10 @@ mongoose.connection.on('connected', ()=>{
 
 
 
-
-app.use(flash());
-
-app.use((req, res, next) => {
-    //console.log(req.session);
-    res.locals.user = req.session.user||null;
-    res.locals.name = req.session.name||null;
-    res.locals.errorMessages = req.flash('error');
-    res.locals.successMessages = req.flash('success');
-    next();
-});
-
-//mount middleware
-app.use(express.static('public'));
-app.use(express.urlencoded({extended: true}));
-app.use(morgan('tiny'));
-app.use(methodOverride("_method"));
- 
-// Authentication middleware
-
-
-
-//mount event routes
-
-
-//mount main routes
+// Setup the Routes
 app.use('/', mainRoutes);
-app.use('/users', userRoutes);
+app.use('/user', userRoutes);
 app.use('/api', APIRoutes);
- 
-const api = require('./routes/APIRoutes');
-api.use('/api', api);
-api.get('/api', (req, res) => {
-    res.render('api');
-});
-
-app.get('/api',  APIRoutes);
-app.get('/api/createUser', APIRoutes);
-//error handling
-//---
-
-app.use((req, res, next)=>{
-    let err = new Error('The server cannot locate ' + req.url);
-    err.status = 404;
-    next(err);
-})
-
-app.use((err, req, res, next)=>{
-    console.log(err.stack);
-    if(!err.status){
-        err.status = 500;
-        err.message = ("Internal server error");
-    }
-
-    res.status(err.status);
-    res.render('error', {error: err});
-});
-
-app.use((req, res, next)=>{
-
-    if(req.session.user){
-        next();
-    }   
-    else{
-        res.redirect('/login');
-    }
-});
 
 
-app.get('/users/logout', (req, res) => {
-    req.session.destroy();
-    res.redirect('/');
-}   );
 
-app.delete('/users/logout', (req, res) => {
-    req.session.destroy();
-    res.redirect('/');
-}
-);

@@ -28,6 +28,7 @@
     "nodemon": "^2.0.16",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
+    "react-hot-toast": "^2.4.0",
     "uuid": "^8.3.2"
   }
 }

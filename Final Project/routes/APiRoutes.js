@@ -1,12 +1,59 @@
 
 const express = require('express');
+let router = express.Router();
 const controller = require('../controllers/apiController');
-const router = express.Router();
-router.get('/api', controller.api);  
-router.get('/api/validate', controller.validate);
-router.get('/api/refresh', controller.refresh);
-router.get('/api/logout', controller.logout);
-router.get('/api/createUser', controller.createUser);
-router.get('/api/getUser', controller.getUser);
+
+router.use(function (req, res, next) {
+    console.log('Time:', Date.now());
+    next();
+});
+
+
+/**
+ * Dwfine the routes for the API
+ */
+
+router.route('/').all( (req, res) => {
+
+    res.send('Welcome to the API');
+      
+});
+/**
+ *  GET /api/players
+ */
+router.route('/login').all( (req, res) => {
+
+    controller.login(req, res);
+});
+
+
+
+router.route('/register').all( (req, res) => {
+
+
+    controller.createUser( req, res).then((result) => {
+        console.log(result);
+        res.send(result);
+    }).catch((err) => {
+        console.log(err);
+        res.send(err);
+    }
+    );
+    
+});
+
+
+router.route('/logout').all( (req, res) => {
+
+    controller.logout(req, res);
+    
+});
+
+
+
+
+ 
+     
+
 
 module.exports = router;
