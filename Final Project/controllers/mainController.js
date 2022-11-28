@@ -1,7 +1,7 @@
 //site navigation
 
 exports.index = (req, res)=>{
-    res.render('./index');
+    res.render('./');
 };
 
 exports.about = (req, res)=>{

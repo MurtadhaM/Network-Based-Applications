@@ -59,8 +59,8 @@ main {
            
 
               
-
-              <%if(!user) {%>
+ 
+           
                 <span class="navbar-item">
                   <a class="button is-white is-outlined" href="/users/login">
                       <span class="icon">
@@ -76,7 +76,7 @@ main {
                     </span>
                     <span>Register</span>
                 </a>
-            </span>              <%} else {%>
+            </span>          
                 <span class="navbar-item">
                   <a class="button is-white is-outlined" href="/Route">
                       <span class="icon">
@@ -102,7 +102,7 @@ main {
                   <span>Logout</span>
               </a>
           </span>
-              <%}%>
+          
               
               
             </ul>
@@ -110,22 +110,6 @@ main {
         </nav>
         
 
-      <% if(errorMessages.length > 0) {%>
-        <% errorMessages.forEach(message=>{%>
-            <div class='error'>
-                <%=message%>
-            </div>
-            <%});%>
-                <%}%>
-    
-                    <% if(successMessages.length > 0) {%>
-    
-                        <% successMessages.forEach(message=>{%>
-                            <div class='success'>
-                                <%=message%>
-                            </div>
-                            <%});%>
-                                <%}%>
 
                                 
                                  

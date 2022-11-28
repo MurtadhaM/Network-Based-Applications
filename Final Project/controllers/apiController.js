@@ -164,6 +164,10 @@ exports.createUser = (req, res) => {
     // Check if username and password are present
     let email = req.query.email;
     let password = req.query.password;
+
+    let lastName = req.query.lastName; 
+    let firstName = req.query.firstName;
+    console.log(`{ "message": "User created" } ${email} ${password} ${lastName} ${firstName}`);
     if (!req.query.email || !req.query.password) {
         console.log(`{ "message": "Missing email or password" } ${email} ${password}`);
         return res.status(400).json({ message: 'All fields are required' });
@@ -176,10 +180,13 @@ exports.createUser = (req, res) => {
         if (user) {
             return res.status(400).json({ message: 'User already exists' });
         }
+
         // Create new user
         const newUser = new User({
             email,
-            password
+            password,
+            lastName,
+            firstName
         });
         // Save user
         newUser.save()

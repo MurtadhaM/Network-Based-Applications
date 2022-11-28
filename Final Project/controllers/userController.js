@@ -1,11 +1,20 @@
 
 // User Controller
+// ==============
+// This controller is used to handle all API requests
 const User = require('../models/user');
-const { check, validationResult } = require('express-validator');
-const passport = require('passport');
+const bcrypt = require('bcryptjs');
+exports.api = (req, res) => {
+    res.json({
+        message: 'API is working'
+    }); 
+}; 
 
+
+const LocalStrategy = require('passport-local').Strategy;
 exports.login = (req, res) => {
-    if (req.session.user) {
+    
+    if (req.session.user)  {
         res.redirect('/users/profile') ;
          
     }
@@ -21,62 +30,67 @@ exports.register = (req, res) => {
 
 }
 
-exports.loginPost = (req, res, next) => {
-    // check if user exists
-    User.findOne  ({email : req.body.email}, (err, user) => {
-        if (err) {
-            console.log(err);
-            return next(err);
-        }
-        if (!user) {
-            req.flash('error', 'User not found');
-            return res.redirect('/users/login');
-        }
- 
-        const bcrypt = require('bcrypt');
-        // check if password matches
-        const isvalid = bcrypt.compareSync(req.body.password, user.password);
-        console.log(isvalid);
-        if (!isvalid) {
-            req.flash('error', 'Password does not match');
-            const bcrypt = require('bcrypt');
-            return res.redirect('/users/login');
-        } 
-        req.session.user = user;
-        req.session.name = user.firstName;
-        req.flash('success', 'You are now logged in');
-        res.redirect('/users/profile');
-    });
-}
-exports.registerPost = (req, res) => {
-
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        console.log(errors);
-        // check if all fields are filled
-        req.flash('error', 'Please fill in all fields');
-        
-        return res.render('register', {errors: errors.array()});
+exports.loginPost = (req, res) => {
+    // Check if username and password are present
+    let email = req;
+    let password = req.query.password;
+    console.log(req.query);
+    if (!req.query.email || !req.query.password) {
+        console.log(`{ "message": "Missing email or password" } ${email} ${password}`);
+        return res.status(400).json({ message: 'All fields are required' });
     }
-    let user = new User({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email,
-        password: req.body.password
-    });
-    console.log(user);
-    user.save()
-    .then(() => {
-        req.flash('success', 'You are now registered and can log in');
-        // create a session
-        req.session.user = user;
-        req.session.name = user.firstName;
-        res.redirect('/users/profile');
+
+    // Check if user exists
+    User.findOne
+    ({ email: req.body.email })
+    .then(user => {
+        if (!user) {
+            
+            return res.status(400).json({ message: 'User not found or password incorrect' });
+        }
+         
+        const isMatch = bcrypt.compareSync(req.query.password, user.password);
+        if (isMatch) { 
+
         
-    })
-    .catch(err => {
-        res.send(err);
-    })
+            console.log(`{ "message": "User not found" } ${user.email} ${user.password}`); 
+            if (isMatch) {
+                console.log(`{ "message": "User logged in" } ${email} ${password}`);
+                return res.status(200).json({ message: 'User logged in' });
+              
+                
+
+            } else {
+
+                console.log(`{ "message": "User not found or password incorrect" } ${email} ${password}`);
+                return res.status(400).json({ message: 'User not found or password incorrect' });
+            }
+        } else {
+            console.log(`{ "message": "User not found or password incorrect" } ${email} ${password}`);
+            return res.status(400).json({ message: 'User not found or password incorrect' });
+
+        }
+        });
+    }
+
+
+
+exports.registerPost = (req, res) => {
+     
+    // Check if username and password are present
+    console.log(req.body);
+    console.log(req.query);
+    let email = req.body.email;
+    let password = req.body.password;
+    if (!req.body.email || !req.body.password) {
+        console.log(`{ "message": "Missing email or password" } ${email} ${password}`);
+        return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    // Check if user exists
+    User
+ 
+
 }
 
 exports.profile = (req, res) => {
@@ -90,7 +104,10 @@ exports.profile = (req, res) => {
 }
 
 exports.logout = (req, res) => {
+    
     req.session.destroy();
+
+    
     res.redirect('/users/login');
 }
 
