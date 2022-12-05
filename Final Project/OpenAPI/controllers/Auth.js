@@ -21,7 +21,7 @@ const jwtOptions = {
  */
  const MongoClient = require('mongodb').MongoClient;
  const mongoose = require('mongoose');
- const uri = process.env.uri || "mongodb+srv://dash:Mavaratchi1.@snakemongodb.uvvqkzx.mongodb.net/snake:"
+ const uri = process.env.uri 
  const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
  
  

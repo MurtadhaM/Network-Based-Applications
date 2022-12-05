@@ -7,7 +7,7 @@ const mongoose = require('mongoose')
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
-const uri = "mongodb+srv://dash:Mavaratchi1.@snakemongodb.uvvqkzx.mongodb.net/?retryWrites=true&w=majority";
+const uri = process.env.uri 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 

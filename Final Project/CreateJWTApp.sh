@@ -6,9 +6,8 @@ echo "Enter the Port Number: "
 read API_PORT
 export API_PORT=$API_PORT
 # echo "Enter the MongoDB URI: "
-# read MONGO_URI
-#export MONGO_URI=$MONGO_URI
-export MONGO_URI="mongodb+srv://dash:Mavaratchi1.@snakemongodb.uvvqkzx.mongodb.net/snake"
+read MONGO_URI
+export MONGO_URI=$MONGO_URI
 
 # Create the App
 function createApp() {
