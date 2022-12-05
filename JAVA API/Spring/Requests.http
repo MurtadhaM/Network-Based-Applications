@@ -1,0 +1,4 @@
+GET http://localhost:8080/API/V1/GetSnake
+Accept: application/json
+
+###

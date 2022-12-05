@@ -1,0 +1,99 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.0/css/bulma.min.css" />
+    <link rel="stylesheet" href="https://bulmatemplates.github.io/bulma-templates/css/landing.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <link rel="stylesheet" href="/styles/header.css">
+    <link rel="stylesheet" href="/styles/footer.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="/scripts/register.js"></script>
+
+
+    <title>Register</title>
+</head>
+<style>
+    .LCont {
+  padding-bottom: 2%;
+}
+
+  .helpful_links a {
+  color: blue !important;
+}
+
+   .login{
+
+width: 25% !important;
+}∂
+.login    a{
+        color: blue !important;
+        width: 25% !important;
+        font-size: 20px;
+
+    }
+
+  .login{
+
+    width: 25% !important;
+  }
+    .container {
+        margin-top: 10%;
+    }
+    .input {
+        margin-top: 10px;
+        background: wheat !important;
+        color: black !important;
+    }
+
+</style>
+
+<body>
+    <%- include('./partials/header.ejs')%>
+   
+    <main  class="hero-body">
+    <form  class="login"  >
+        <label for="email">Email</label>
+        <input class="input" type="email" name="email" id="email" placeholder="Email" required>
+        <label for="password">Password</label>
+        <input class="input" type="password" name="password" id="password" placeholder="Password" required>
+        <label for="password2">Confirm Password</label>
+        <input class="input" type="password" name="password2" id="password2" placeholder="Confirm Password" required>
+        <label for="firstName">First Name</label>
+        <input class="input" type="text" name="firstName" id="firstName" placeholder="First Name" required>
+        <label for="lastName">Last Name</label>
+        <input class="input" type="text" name="lastName" id="lastName" placeholder="Last Name" required>
+
+        <input  id="updateBtn" class="button is-primary" onclick="register()"  type="button" value="Register">
+      </form>
+            <br>
+            <nav class="level">
+              <div class="level-item has-text-centered">
+                <div>
+                  <a href="" onclick="alert('got it')">Forgot Password?</a>
+                </div>
+              </div>
+              <div class="level-item has-text-centered">
+                <div>
+                  <a href="/users/register">Create an Account</a>
+                </div>
+              </div>
+            </nav>
+          </div>
+        </div>
+      </section>
+    </main>
+    <%- include('./partials/footer.ejs')%>
+
+    
+</body>
+</html>

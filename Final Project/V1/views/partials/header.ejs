@@ -1,0 +1,58 @@
+<script>      <%- AuthenticatedUserLinks = {"Home": "/",      "About": "/about",      "Contact": "/contact",      "Profile": "/users/profile",      "Logout": "/users/logout",     } %>
+    <%- unAuthenticatedUserLinks = {"Home": "/",      "About": "/about",      "Contact": "/contact",      "Login": "/users/login",      "Register": "/users/register",    } %>
+  </script>
+<header src="/styles/header.css" class="header" id="header">
+
+  <div id="navbarMenu" class="navbar-menu ">
+
+    <a href='#'><img width="100px" height="100px" src="/images/logo.png" class="navBarLogo" alt="find a snake llc"></a>
+    <a href="#">
+      <h2 class="title">Find a Snake LLC</h2>
+    </a>
+    <nav>
+
+
+      <ul class="userSpecificNav">
+        <div class="navbar-end">
+          <!-- If the user is logged in-->
+          <% if  (user) { %>
+          <ul class="nav-links">
+            <% for (let link in AuthenticatedUserLinks) { %>
+            <span class="navbar-item">
+              <!-- <a class="button is-white is-outlined" href="/users/login"> -->
+              <a class="button is-white is-outlined" href="<%= AuthenticatedUserLinks[link] %>"
+                class="nav-link"><%= link %></a>
+              <span class="icon">
+              </span>
+              <% } %>
+          </ul>
+          <% } else { %>
+          <!-- If the user is not logged in -->
+          <ul class="nav-links">
+            <% for (let link in unAuthenticatedUserLinks) { %>
+            <span class="navbar-item">
+              <!-- <a class="button is-white is-outlined" href="/users/login"> -->
+              <a class="button is-white is-outlined" href="<%= unAuthenticatedUserLinks[link] %>"
+                class="nav-link"><%= link %></a>
+              <span class="icon">
+              </span>
+              <% } %>
+          </ul>
+          <% } %>
+
+
+      </ul>
+
+    </nav>
+
+  </div>
+
+
+
+
+
+
+
+  </div>
+  </div>
+</header>

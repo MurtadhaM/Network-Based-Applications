@@ -1,0 +1,43 @@
+.google-maps {
+    position: relative;
+    padding-bottom: 75%; // This is the aspect ratio
+    height: 0;
+    overflow: hidden;
+}
+.google-maps iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.footer {
+  bottom: 0;
+  width: 100vw;
+  padding: 0;
+  height: 80px;
+  line-height: 25px;
+  text-align: center;
+  background: #1f2c6c;
+  color: whitesmoke;
+  padding-top: 2rem;
+}
+
+.footer a {
+  padding: 0rem 1rem 1rem 1rem;
+  color: lightgrey;
+}
+
+.footer a i {
+  font-size: 1.5rem;
+  padding: 0px 10px;
+}
+
+.footer a .nav-item {
+  color: whitesmoke;
+}
+
+.fa-download {
+  color: #43485c;
+}
