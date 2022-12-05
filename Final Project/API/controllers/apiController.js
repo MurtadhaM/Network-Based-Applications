@@ -1,243 +1,293 @@
+require("dotenv").config();
+require("../config/database").connect();
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const Ticket = require("../models/Ticket");
+const User = require("../models/user");
 
+// GETTING THE JWT SECRET KEY
+const jwtPrivateKey = process.env.JWT_PRIVATE_KEY || "jwtPrivateKey";
 
-// API Controller
-// ==============
-// This controller is used to handle all API requests
-const User = require('../models/user');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const login = async (req, res) => {
 
-exports.api = (req, res) => {
-    res.json({
-        message: 'API is working'
-    }); 
-}; 
+try {
+// Get user input
+const {
+email,
+password
+} = req.body;
 
-const createSession = (req, res) => {
+// Validate user input
+if (!(email && password)) {
+res.status(400).send("All input is required");
+}
+// Validate if user exist in our database
+const user = await User.findOne({
+email
+});
+
+if (user && (await user.isValidPassword(password))) {
+// Create token
+const token = jwt.sign({
+user_id: user._id,
+email
+},
+jwtPrivateKey, {
+expiresIn: "2h",
+}
+);
+
+// save user token
+user.token = token;
     
-    // Check if authorization header is set
-    if (req.headers.authorization) {
-        // Authorization header is set
-        // Split at the space
-        const bearer = req.headers.authorization.split(' ');
-        // Get token from array
-        const token = bearer[1];
-        // Set the token
-        req.token = token;
-        // Next middleware
-        next();
-    } else {
-        // Forbidden
-        res.sendStatus(403);
+// Save user
+await user.save();
+
+// user
+res.status(200).json(user).send("Login successful");
+} else {
+        res.status(400).send("Invalid Credentials");
     }
-    res.append('Access-Control-Allow-Origin', ['*']);
-    res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-    res.append('Access-Control-Allow-Headers', 'Content-Type');
-    res.append('Access-Control-Allow-Credentials', 'true');
-    res.append('Access-Control-Max-Age', '86400');
-    res.append('Access-Control-Expose-Headers', 'Authorization');
-    res.append('Access-Control-Expose-Headers', 'Content-Type');
-    res.append('Access-Control-Expose-Headers', 'X-Requested-With');
-    res.append('Access-Control-Expose-Headers', 'Accept');
+} catch (err) {
+console.log(err);
+}
+
 };
 
 
-const login = (req, res) => {
-    // Check if username and password are present
-    let email = req.query.email || req.body.email; 
-    let password = req.query.password || req.body.password;
+const register = async (req, res) => {
+
+try {
+// Get user input
+const {
+firstName,
+lastName,
+email,
+password
+} = req.body || req.query;
+
+// Validate user input
+if (!(email && password && firstName && lastName)) {
+res.status(400).send("All input is required");
+}
+
+// check if user already exist
+// Validate if user exist in our database
+const oldUser = await User.findOne({
+email
+});
+
+if (oldUser) {
+return res.status(409).send("User Already Exist. Please Login");
+}
+
+
+// Create user in our database
+const user = await User.create({
+firstName,
+lastName,
+email: email.toLowerCase(), // sanitize: convert email to lowercase
+password: password,
+});
+
+// Create token
+const token = jwt.sign({
+user_id: user._id,
+email
+},
+jwtPrivateKey, {
+expiresIn: "2h",
+}
+);
+// save user token
+user.token = token;
+
+// return new user
+res.status(201).json(user);
+} catch (err) {
+console.log(err);
+}
+
+}
+
+
+
+const logout = async (req, res) => {
+try {
+    // GET THE TOKEN FROM THE HEADER
+    const token = req.header("Authorization").replace("Bearer ", "");
+    // FIND
+    const user
+    = await User.findOne({
+        token
+    });
+    // IF USER IS FOUND
+    if (user) {
+
+        //
+        user.token = null;
+        await user.save();
+        res.status(200).send("Logout successful");
+    } else {
+        res.status(404).send("User not found");
+    }
+} catch (err) {
+
+    res.status(500).send("Internal Server Error");
+}
+
+}
+
+
+/**
+ * EDIT USER
+ */
+const getAvailableTickets = async (req, res) => {
+
     
-    if (!email|| !password) {
-        console.log(`{ "message": "Missing email or password" } ${email} ${password}`);
-        return res.status(400).json({ message: 'All fields are required' });
-    }
-    console.log(`{ "message": "User logged in" } ${email} ${password}`);
- 
-    // Check if user exists
-    User.findOne({"email": email })
-    .then(user => {
-        if (!user) {
-            
-            return res.status(400).json({ message: 'User not found or password incorrect' });
-        }
-        const isMatch = bcrypt.compareSync(password, user.password);
-        if (isMatch) { 
-
-        
-            console.log(`{ "message": "User not found" } ${user.email} ${user.password}`); 
-            if (isMatch) {
-                console.log(`{ "message": "User logged in" } ${email} ${password}`);
-                // Create JWT Payload
-                const payload = {
-                    id: user.id,
-                    email: user.email,
-                    name: user.name
-                };
-                // Sign token
-                
-                // Sign token
-                jwt.sign(
-                    payload,
-                    secretOrPrivateKey = process.env.MONGO_SESSION_SECRET,
-                        
-                );
-            } else {
-                console.log(`{ "message": "User not found or password incorrect" } ${email} ${password}`);
-                return res.status(400).json({ message: 'User not found or password incorrect' });
-            } 
-            
-        } else {
-            console.log(`{ "message": "User not found or password incorrect" } ${email} ${password}`);
-            return res.status(400).json({ message: 'User not found or password incorrect' });
-
-        }
-        });
-    };
-
-
-const validate = (req, res) => {
-    // Check if authorization header is set
-    if (req.headers.authorization) {
-        // Authorization header is set
-        // Split at the space
-        const bearer = req.headers.authorization.split(' ');
-        // Get token from array
-        const token = bearer[1];
-        // Set the token
-        req.token = token;
-        // Next middleware
-        next();
-    } else {
-        // Forbidden
-        res.sendStatus(403);
-    }
-}
-
-
-const refresh = (req, res) => {
-    // Check if authorization header is set
-    if (req.headers.authorization) {
-        // Authorization header is set
-        // Split at the space
-        const bearer = req.headers.authorization.split(' ');
-        // Get token from array
-        const token = bearer[1];
-        // Set the token
-        req.token = token;
-        // Next middleware
-        next();
-    } else {
-        // Forbidden
-        res.sendStatus(403);
-    }
-}
-
-const logout = (req, res) => {
-    // Check if authorization header is set
-    if (req.headers.authorization) {
-        // Authorization header is set
-        // Split at the space
-        const bearer = req.headers.authorization.split(' ');
-        // Get token from array
-        const token = bearer[1];
-        // Set the token
-        req.token = token;
-        // Next middleware
-        next();
-    } else {
-        // Forbidden
-        res.sendStatus(403);
-    }
-}
-
-const getUser = (req, res) => {
-    // Check if authorization header is set
-    if (req.headers.authorization) {
-        // Authorization header is set
-        // Split at the space
-        const bearer = req.headers.authorization.split(' ');
-        // Get token from array
-        const token = bearer[1];
-        // Set the token
-        req.token = token;
-        // Next middleware
-        next();
-    } else {
-        // Forbidden
-        res.sendStatus(403);
-    }
-}
-
-const createUser = (req, res) => {
-    // Check if authorization header is set
-    const JWT_SECRET = process.env.JWT_SECRET;
-
-    // Check if username and password are present
-    let email = req.query.email || req.body.email;
-    let password = req.query.password || req.body.password;
-
-    let lastName = req.query.lastName || req.body.lastName;
-    let firstName = req.query.firstName || req.body.firstName;
-
-    console.log(`{ "message": "User created" } ${email} ${password} ${lastName} ${firstName}`);
-    if (!email || !password|| !lastName|| !firstName) {
-        console.log(`{ "message": "Missing email or password" } ${email} ${password}`);
-        return res.status(400).json({ message: 'All fields are required' });
-    }
-
-    // Check if user exists
-    User.findOne
-    ({ email })
-    .then(user => {
-        if (user) {
-            return res.status(400).json({ message: 'User already exists' });
-        }
-
-        // Create new user
-        const newUser = new User({
-            email,
-            password,
-            lastName,
-            firstName
-        });
-        // Save user
-        newUser.save()
-        .then(user => {
-
-            console.log(`{ "message": "User created" } ${email} ${password}`);
-
-            user.save() 
-
-            return res.status(200).json({ message: 'User created' });
-        })
-        .catch(err => {
-            console.log(err);
-            return res.status(400).json({ message: 'User not created' });
-        });
-    })
-    .catch(err => {
-        console.log(err);
-        return res.status(400).json({ message: 'User not created' });
+try {
+    // GET ALL AVAILABLE TICKETS
+    const tickets = await Ticket.find({
+        isAvailable: true
     });
 
 
+    res.status(200).json(tickets);
+} catch (err) {
+    console.log(err);
+    res.status(500).send("Internal Server Error");
+}
 }
 
+
+const getUserTickets = async (req, res) => {
     
-const updateUser = (req, res) => {
-    // Check if authorization header is set
-    if (req.headers.authorization) {
-        // Authorization header is set
-        // Split at the space
-        const bearer = req.headers.authorization.split(' ');
-        // Get token from array
-        const token = bearer[1];
-        // Set the token
-        req.token = token;
-        // Next middleware
-        next();
-    } else {
-        // Forbidden
-        res.sendStatus(403);
-    }
+try {
+     
+    // Get the Tickets from the user
+    const tickets = await Ticket.find({
+        user: req.user._id
+
+    });
+    res.status(200).json(tickets);
+} catch (err) {
+    console.log(err);
+    res.status(500).send("Internal Server Error");
 }
+}
+
+const addTicket = async (req, res) => {
+
+    
+
+    try {
+        // Get user input
+        const {
+            title,
+            description,
+            price,
+            isAvailable
+        } = req.body;
+
+        // Validate user input
+        if (!(title && description && price && isAvailable)) {
+            res.status(400).send("All input is required");
+        }
+
+        // Check if ticket already exist
+        const oldTicket = await Ticket.findOne({
+            title
+        });
+
+        if (oldTicket) {
+            return res.status(409).send("Ticket Already Exist. Please Login");
+        }
+
+        // Create ticket in our database
+
+        const ticket = await Ticket.create({
+            title,
+            description,
+            price,
+            isAvailable,
+            user: req.user._id
+        });
+
+        // Save ticket
+        await ticket.save();
+        // return new ticket
+
+        res.status(201).json(ticket);
+    } catch (err) {
+
+        res.status(500).send("Internal Server Error");
+    }
+
+}
+
+const buyTicket = async (req, res) => {
+     
+    try {
+        // Get user input
+        const {
+            ticketId,
+            price
+        } = req.body || req.query || req.params;
+
+
+        // Validate user input
+        if (!(ticketId || req.user._id || price )) {
+            res.status(400).send("All input is required");
+
+        }
+
+        // Check if ticket already exist
+        const ticket = await Ticket.findOne({
+            _id: ticketId
+        });
+
+        if (!ticket) {
+            return res.status(409).send("Ticket does not exist");
+        }
+
+        // Check if ticket is available
+        if (!ticket.isAvailable) {
+            return res.status(409).send("Ticket is not available");
+        }
+
+        
+
+
+    
+
+
+
+        // Update ticket
+        ticket.isAvailable = false;
+        ticket.user = req.user._id;
+        await ticket.save();
+
+        // return new ticket
+        res.status(201).json(ticket);
+        
+    } catch (err) {
+        console.log(err);
+        res.status(500).send("Internal Server Error");
+    }
+
+}
+
+
+
+
+module.exports = {
+login,
+register,
+logout,
+getAvailableTickets,
+getUserTickets,
+addTicket,
+buyTicket
+};
+
+        
