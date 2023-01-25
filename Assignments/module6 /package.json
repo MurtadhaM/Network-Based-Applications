@@ -1,0 +1,19 @@
+{
+  "name": "excercise-6",
+  "version": "1.0.0",
+  "description": "An Express MVC app",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js",
+    "dev": "nodemon app.js"
+  },
+  "author": "Murtadha Marzouq",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.8",
+    "luxon": "^3.2.1",
+    "method-override": "^3.0.0",
+    "morgan": "^1.10.0"
+  }
+}
